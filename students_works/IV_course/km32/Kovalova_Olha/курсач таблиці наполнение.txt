@@ -1,0 +1,154 @@
+
+
+-------------------------
+-- Create Users table
+-------------------------
+CREATE TABLE User1
+(
+  certificate_id      varchar(10)  NOT NULL ,
+  user_name    varchar(50)  NOT NULL ,
+  user_email   varchar(255) NOT NULL,
+  user_password varchar(20) NOT NULL
+);
+
+
+CREATE TABLE UserWork
+(
+  user_mark  varchar(3)    NOT NULL ,
+  work_id varchar(          NOT NULL ,
+  certificate_id    varchar(10)   NOT NULL ,
+  test_name   varchar(50) NOT NULL  
+);
+
+
+
+
+CREATE TABLE UserAnswer
+(
+  work_id  int   NOT NULL ,
+  answ_mark int   NOT NULL ,
+  user_answ    int NOT NULL,
+  answ_number  int NOT NULL
+);
+
+------------------------
+-- Create Products table
+------------------------
+CREATE TABLE Subject
+(
+  subj_name  varchar(30)      NOT NULL  
+);
+
+-----------------------
+-- Create Vendors table
+-----------------------
+CREATE TABLE Task
+(
+  task     varchar(50) NOT NULL ,
+  test_name    varchar(30) NOT NULL ,
+  subj_name varchar(30) NOT NULL ,
+  correct_answ    int NOT NULL  
+);
+
+CREATE TABLE Tests
+(
+  test_name    varchar(30) NOT NULL ,  
+  test_date  date NOT NULL
+);
+
+
+
+
+
+CREATE VIEW VIEW_WHO_DID
+AS
+SELECT  User1.User_name, Userwork.TEST_NAME, Tests.TEST_DATE
+FROM User1, Userwork, Tests
+WHERE User1.CERTIFICATE_ID=Userwork.CERTIFICATE_ID
+AND Userwork.TEST_NAME=Tests.TEST_NAME
+AND Userwork.DONE='1';
+
+
+CREATE OR REPLACE VIEW REGUSERS
+AS
+SELECT User1.Certificate_id, User1.USER_PASSWORD
+FROM USER1;
+
+
+
+
+
+----------------------
+-- Define primary keys
+----------------------
+ALTER TABLE User1 ADD CONSTRAINT PK_User1 PRIMARY KEY (certificate_id);
+ALTER TABLE UserWork ADD CONSTRAINT PK_UserWork PRIMARY KEY (work_id);
+ALTER TABLE UserAnswer ADD CONSTRAINT PK_UserAnswer PRIMARY KEY (answ_number);
+ALTER TABLE Subject ADD CONSTRAINT PK_Subject PRIMARY KEY (subj_name);
+ALTER TABLE Task ADD CONSTRAINT PK_Task PRIMARY KEY (task);
+ALTER TABLE Tests ADD CONSTRAINT PK_Tests PRIMARY KEY (test_name);
+
+----------------------
+-- Define foreign keys
+----------------------
+ALTER TABLE UserWork
+ADD CONSTRAINT FK_UserWork_User1 FOREIGN KEY (certificate_id) REFERENCES User1 (certificate_id);
+ALTER TABLE UserAnswer
+ADD CONSTRAINT FK_UserAnswer_UserWork FOREIGN KEY (work_id) REFERENCES UserWork (work_id);
+ALTER TABLE UserWork
+ADD CONSTRAINT FK_UserWork_Tests FOREIGN KEY (test_name) REFERENCES Tests (test_name);
+ALTER TABLE Task
+ADD CONSTRAINT FK_Task_Tests FOREIGN KEY (test_name) REFERENCES Tests (test_name);
+ALTER TABLE Task
+ADD CONSTRAINT FK_Task_Subject FOREIGN KEY (subj_name) REFERENCES Subject (subj_name);
+ALTER TABLE UserAnswer
+ADD CONSTRAINT FK_UserAnswer_Task FOREIGN KEY (task) REFERENCES Task (task);
+
+
+
+
+
+---------------------------
+-- Populate Cust table
+---------------------------
+INSERT INTO User1(user_name, certificate_id, user_email, user_password)
+VALUES('Polina', '10231532', 'pol@.ua', '1234');
+INSERT INTO User1(user_name, certificate_id, user_email, user_password)
+VALUES('Olka', '3000', 'ol@.ua', '1234');
+INSERT INTO User1(user_name, certificate_id, user_email, user_password)
+VALUES('Julia', '1000', 'andr@ua', '1234');
+
+-------------------------
+-- Populate Vendors table
+-------------------------
+INSERT INTO UserWork(user_mark, work_id, certificate_id, test_name)
+VALUES('0','1111','10231532','Math-1');
+
+
+--------------------------
+-- Populate Products table
+--------------------------
+INSERT INTO UserAnswer(work_id, answ_mark, user_answ, answ_number, task)
+VALUES('1', '0', '0', '1', 'Do you like math subject?');
+
+
+------------------------
+-- Populate Orders table
+------------------------
+INSERT INTO Subject(subj_name)
+VALUES('Math');
+INSERT INTO Subject(subj_name)
+VALUES('Bioligy');
+INSERT INTO Subject(subj_name)
+VALUES('DB');
+
+----------------------------
+-- Populate OrderItems table
+----------------------------
+INSERT INTO Tests(test_name, test_date)
+VALUES('Math_1', TO_DATE('2017-26-01', 'yyyy-mm-dd'));
+
+
+INSERT INTO Task(task, test_name, subj_name, correct_answ)
+VALUES('Do you like math subject?', 'Math_1', 'Math', '1');
+
